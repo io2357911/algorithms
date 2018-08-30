@@ -22,4 +22,9 @@ void Test::sort() {
         count_sort(array);
         CPPUNIT_ASSERT(std::is_sorted(array.begin(), array.end()));
     }
+
+    for (auto array : arrays) {
+        insert_sort(array);
+        CPPUNIT_ASSERT(std::is_sorted(array.begin(), array.end()));
+    }
 }

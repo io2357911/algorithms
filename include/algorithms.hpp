@@ -73,6 +73,26 @@ void count_sort(array<T> &array) {
     array = arrayCopy;
 }
 
+/**
+ * @brief insert sort algorithm implementation
+ * @param array to be sorted
+ */
+template <typename T>
+void insert_sort(array<T> &array) {
+    size_t size = array.size();
+    if (!size) return;
+
+    for (size_t i = 1; i < size; i++) {
+        for (int j = i - 1; j >= 0; j--) {
+            if (array[j+1] < array[j]) {
+                std::swap(array[j+1], array[j]);
+            } else {
+                break;
+            }
+        }
+    }
+}
+
 } // namespace io2357911::algorithms
 
 #endif // ALGORITHMS_H
