@@ -1,0 +1,8 @@
+build/
+doc/html
+*.o
+*.a
+*.mk
+*.orig
+*.log
+.tags
