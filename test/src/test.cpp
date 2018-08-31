@@ -24,4 +24,5 @@ void Test::sort() {
     test_sort(insert_sort, arrays);
     test_sort(merge_sort, arrays);
     test_sort(quick_sort, arrays);
+    test_sort(heap_sort, arrays);
 }

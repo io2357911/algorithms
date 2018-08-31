@@ -4,6 +4,7 @@
 #include <iterator>
 #include <iostream>
 #include <algorithm>
+#include <queue>
 
 /**
  * @brief contains algorithms
@@ -15,6 +16,7 @@ namespace io2357911::algorithms {
  **/
 template <typename T>
 using array = std::vector<T>;
+//using array = std::deque<T>;
 
 /**
  * @brief prints array of T items
@@ -203,6 +205,24 @@ void quick_sort(It first, It last) {
 template <typename T>
 void quick_sort(array<T> &array) {
     return quick_sort(array.begin(), array.end());
+}
+
+/**
+ * @brief heap sort algorithm implementation
+ * @param array to be sorted
+ */
+template <typename T>
+void heap_sort(array<T> &array) {
+    std::priority_queue<T> queue;
+
+    for (auto item : array) {
+        queue.push(item);
+    }
+
+    for (auto i = array.rbegin(); i != array.rend(); i++) {
+        *i = queue.top();
+        queue.pop();
+    }
 }
 
 } // namespace io2357911::algorithms
