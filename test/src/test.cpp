@@ -27,4 +27,10 @@ void Test::sort() {
         insert_sort(array);
         CPPUNIT_ASSERT(std::is_sorted(array.begin(), array.end()));
     }
+
+    for (auto array : arrays) {
+        merge_sort(array);
+        CPPUNIT_ASSERT(std::is_sorted(array.begin(), array.end()));
+    }
+
 }

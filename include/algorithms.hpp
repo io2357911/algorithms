@@ -53,7 +53,7 @@ void count_sort(array<T> &array) {
     size_t size = array.size();
     if (!size) return;
 
-    auto counters = std::vector<size_t>(array.size(), 0);
+    auto counters = algorithms::array<size_t>(array.size(), 0);
 
     for (size_t i = 0; i < size - 1; i++) {
         for (size_t j = i + 1; j < size; j++) {
@@ -91,6 +91,65 @@ void insert_sort(array<T> &array) {
             }
         }
     }
+}
+
+/**
+ * @brief merges two array parts into one array
+ * @param firstPart is first part to be merged
+ * @param secondPart is second part to be merged
+ * @param target is array to merge in both parts
+ */
+template <typename T>
+void merge(const array<T> &firstPart,
+    const array<T> &secondPart,
+    array<T> &target) {
+
+    auto f = firstPart.begin();
+    auto s = secondPart.begin();
+    auto t = target.begin();
+
+    // copy entire part (first or second)
+
+    while (f != firstPart.end() && s != secondPart.end()) {
+        if (*f < *s) {
+            *t = *f;
+            f++;
+        } else {
+            *t = *s;
+            s++;
+        }
+        t++;
+    }
+
+    // copy remain part (first or second)
+
+    if (f != firstPart.end()) {
+        std::copy(f, firstPart.end(), t);
+    } else {
+        std::copy(s, secondPart.end(), t);
+    }
+}
+
+/**
+ * @brief merge sort algorithm implementation
+ * @param array to be sorted
+ */
+template <typename T>
+void merge_sort(array<T> &array) {
+    size_t size = array.size();
+    if (size < 2) return;
+
+    size_t half = size / 2;
+
+    auto firstPart = algorithms::array<T>(
+        array.begin(), array.begin() + half);
+    merge_sort(firstPart);
+
+    auto secondPart = algorithms::array<T>(
+        array.begin() + half, array.end());
+    merge_sort(secondPart);
+
+    merge(firstPart, secondPart, array);
 }
 
 } // namespace io2357911::algorithms
