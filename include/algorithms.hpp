@@ -2,6 +2,7 @@
 #define ALGORITHMS_H
 
 #include <iterator>
+#include <iostream>
 #include <algorithm>
 
 /**
@@ -150,6 +151,58 @@ void merge_sort(array<T> &array) {
     merge_sort(secondPart);
 
     merge(firstPart, secondPart, array);
+}
+
+/**
+ * @brief makes partiton for quick sort algorithm
+ * @param first is iterator to array's first item
+ * @param last is iterator to array's last item
+ * @return iterator to partition item
+ */
+template <typename It>
+It partition(It first, It last) {
+    auto part = last - 1; // partition item
+    auto border = first; // first item larger than the partition one
+    auto cur = first;
+
+    // push less item to the left behind the border
+
+    while (cur != last) {
+        if (*cur < *part) {
+            std::iter_swap(cur, border);
+            border++;
+        }
+        cur++;
+    }
+
+    // place the partition item at it's place
+
+    std::iter_swap(part, border);
+
+    return border;
+}
+
+/**
+ * @brief quick sort algorithm implementation
+ * @param first is iterator to array's first item
+ * @param last is iterator to array's last item
+ */
+template <typename It>
+void quick_sort(It first, It last) {
+    if (last - first < 2) return;
+
+    auto part = partition(first, last);
+    quick_sort(first, part);
+    quick_sort(part + 1, last);
+}
+
+/**
+ * @brief quick sort algorithm implementation
+ * @param array to be sorted
+ */
+template <typename T>
+void quick_sort(array<T> &array) {
+    return quick_sort(array.begin(), array.end());
 }
 
 } // namespace io2357911::algorithms
