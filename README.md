@@ -10,3 +10,5 @@ sort:
 - quick
 - heap
 
+search:
+- in matrix sorted by rows and columns
