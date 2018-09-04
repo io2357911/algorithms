@@ -1,22 +1,17 @@
-#ifndef ALGORITHMS_H
-#define ALGORITHMS_H
+#ifndef SORT_H
+#define SORT_H
 
 #include <iterator>
 #include <iostream>
 #include <algorithm>
 #include <queue>
+#include "array.hpp"
+#include "matrix.hpp"
 
 /**
- * @brief contains algorithms
+ * @brief contains classes and algorithms
  **/
-namespace io2357911::algorithms {
-
-/**
- * @brief array abstraction
- **/
-template <typename T>
-using array = std::vector<T>;
-//using array = std::deque<T>;
+namespace io2357911 {
 
 /**
  * @brief prints array of T items
@@ -56,7 +51,7 @@ void count_sort(array<T> &array) {
     size_t size = array.size();
     if (!size) return;
 
-    auto counters = algorithms::array<size_t>(array.size(), 0);
+    auto counters = io2357911::array<size_t>(array.size(), 0);
 
     for (size_t i = 0; i < size - 1; i++) {
         for (size_t j = i + 1; j < size; j++) {
@@ -144,11 +139,11 @@ void merge_sort(array<T> &array) {
 
     size_t half = size / 2;
 
-    auto firstPart = algorithms::array<T>(
+    auto firstPart = io2357911::array<T>(
         array.begin(), array.begin() + half);
     merge_sort(firstPart);
 
-    auto secondPart = algorithms::array<T>(
+    auto secondPart = io2357911::array<T>(
         array.begin() + half, array.end());
     merge_sort(secondPart);
 
@@ -225,6 +220,7 @@ void heap_sort(array<T> &array) {
     }
 }
 
-} // namespace io2357911::algorithms
+} // namespace io2357911
 
-#endif // ALGORITHMS_H
+#endif // SORT_H
+
