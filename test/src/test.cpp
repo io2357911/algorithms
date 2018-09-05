@@ -27,10 +27,10 @@ void Test::sort() {
     test_sort(heap_sort, arrays);
 }
 
-#define test_matrix_sorted_find(matrix, values, result) \
+#define test_matrix_sorted_find(find, matrix, values, result) \
 for (size_t row = 0; row < values.rows(); row++) { \
     for (size_t col = 0; col < values.columns(); col++) { \
-        CPPUNIT_ASSERT_EQUAL(sorted_find(matrix, values[row][col]), result); \
+        CPPUNIT_ASSERT_EQUAL(find(matrix, values[row][col]), result); \
     } \
 }
 
@@ -47,7 +47,8 @@ void Test::find() {
     };
     values = matrix;
     result = true;
-    test_matrix_sorted_find(matrix, values, result);
+    test_matrix_sorted_find(sorted_find, matrix, values, result);
+    test_matrix_sorted_find(binary_sorted_find, matrix, values, result);
 
     matrix = {
         {15,20,40,85},
@@ -59,5 +60,6 @@ void Test::find() {
         {1,2,3,4,82,83,121,200},
     };
     result = false;
-    test_matrix_sorted_find(matrix, values, result);
+    test_matrix_sorted_find(sorted_find, matrix, values, result);
+    test_matrix_sorted_find(binary_sorted_find, matrix, values, result);
 }
