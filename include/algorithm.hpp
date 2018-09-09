@@ -3,5 +3,6 @@
 
 #include "sort.hpp"
 #include "find.hpp"
+#include "derivative.hpp"
 
 #endif // ALGORITHM_H
