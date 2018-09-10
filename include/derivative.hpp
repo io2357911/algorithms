@@ -1,6 +1,11 @@
 #ifndef DERIVATIVE_H
 #define DERIVATIVE_H
 
+/**
+ * solution for polynomial derivative task
+ * https://stepik.org/lesson/11831/step/10?unit=2979 
+ */
+
 #include <string>
 #include <list>
 #include <regex>
@@ -8,6 +13,9 @@
 
 namespace io2357911 {
 
+/**
+ * @brief term class which is a member of polynomial
+ */
 class term {
 public:
     int factor = 0;
@@ -132,6 +140,11 @@ public:
     }
 };
 
+/**
+ * @brief term iterator class
+ *
+ * iterate through string in poly terms
+ */
 class term_iterator {
 public:
     term_iterator(const std::string &polynomial) :
@@ -171,6 +184,9 @@ private:
     term _term;
 };
 
+/**
+ * @brief polynomial class
+ */
 class polynomial : public std::set<term, std::greater<term>> {
 public:
 
@@ -211,6 +227,11 @@ public:
 
 };
 
+/**
+ * @brief term derivative
+ * @param term is input term
+ * @return term derivatirve
+ */
 term derivative(const term &term) {
     auto newTerm = term;
 
@@ -225,6 +246,11 @@ term derivative(const term &term) {
     return newTerm;
 }
 
+/**
+ * @brief polynomial normalization
+ * @param poly is input polynomial
+ * @return normalized polynomial
+ */
 polynomial normalize(const polynomial &poly) {
     polynomial newPoly;
     if (poly.empty()) return poly;
@@ -254,6 +280,11 @@ polynomial normalize(const polynomial &poly) {
     return newPoly;
 }
 
+/**
+ * @brief polynomial derivative
+ * @param poly is input polynomial
+ * @return polynomial derivative
+ */
 polynomial derivative(const polynomial &poly) {
     polynomial newPoly;
     for (auto term : poly) {
@@ -262,6 +293,11 @@ polynomial derivative(const polynomial &poly) {
     return normalize(newPoly);
 }
 
+/**
+ * @brief polynomial derivative
+ * @param poly is input polynomial string
+ * @return polynomial derivative string
+ */
 std::string derivative(std::string poly) {
     return derivative(polynomial::parse(poly));
 }
