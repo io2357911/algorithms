@@ -4,6 +4,7 @@
 #include <string>
 #include <list>
 #include <regex>
+#include <set>
 
 namespace io2357911 {
 
@@ -16,14 +17,14 @@ public:
         term term;
 
         std::smatch match;
-		std::regex re;
-        
+        std::regex re;
+
+        bool hasX = string.find("x") != std::string::npos;
+
         // parse factor
 
-TODO: // fix "-" parsing
-
-		re = std::regex("^([0-9\\+\\-]+).*");
-		if(std::regex_search(string, match, re) && match.size() > 1) {
+        re = std::regex("^([0-9\\+\\-]+).*");
+        if(std::regex_search(string, match, re) && match.size() > 1) {
             std::string value = match[1];
             if (value == "+") {
                 term.factor = 1;
@@ -33,20 +34,37 @@ TODO: // fix "-" parsing
                 term.factor = std::stoi(match[1]); 
             }
 
-        } else if (string.find("x") != std::string::npos) {
+        } else if (hasX) {
             term.factor = 1; 
         }
-        
+
         // parse power
 
-		re = std::regex(".*\\^([0-9]+)");
-		if(std::regex_search(string, match, re) && match.size() > 1) {
+        re = std::regex(".*\\^([0-9]+)");
+        if(std::regex_search(string, match, re) && match.size() > 1) {
             term.power = std::stoi(match[1]); 
+
+        } else if (hasX) {
+            term.power = 1; 
         }
 
         return term;
     }
+
+    bool isValid() const {
+        return factor;
+    }
     
+    term operator+(const term &other) const {
+        term newTerm;
+        if (power != other.power) return newTerm;
+
+        newTerm.factor = factor + other.factor;
+        newTerm.power = power;
+
+        return newTerm;
+    }
+
     bool operator<(const term &other) const {
         if (power > other.power) return false;
         if (power == other.power && factor > other.factor) return false;
@@ -60,20 +78,52 @@ TODO: // fix "-" parsing
     }
 
     operator std::string() const {
-        std::string res;
+        std::stringstream res;
 
-TODO: // implement correct formating
+        bool needSign = true; // +-
+        bool needFactor = true; // [0-9]+
+        bool needMul = true; // *
+        bool needX = true; // x
+        bool needP = true; // ^
+        bool needPower = true; // [0-9]+
 
-        if (!factor) return "0";
-        if (factor >= 0) res += "+";
-        else if (factor < 0) res += "-";
-        //if (std::abs(factor) != 1) res += std::to_string(factor);
-        res += std::to_string(factor);
+        if (!factor) {
+            needMul = false;
+            needX = false;
+            needP = false;
+            needP = false;
 
-        if (power > 1) res += "*x^" + std::to_string(power);
-        else if (power == 1) res += "*x";
+        } else if (std::abs(factor) == 1) {
+            needFactor = false;
+            needMul = false;
 
-        return res;
+        } else if (factor < 0) {
+            needSign = false; 
+        }
+
+        if (!power) {
+            needMul = false;
+            needX = false;
+            needP = false;
+            needPower = false;
+
+        } else if (power == 1) {
+            needP = false;
+            needPower = false;
+        }
+
+        if (!needX) {
+            needFactor = true;
+        }
+    
+        if (needSign) res << (factor < 0 ? "-" : "+");
+        if (needFactor) res << factor;
+        if (needMul) res << "*";
+        if (needX) res << "x";
+        if (needP) res << "^";
+        if (needPower) res << power;
+
+        return res.str();
     }
 
     friend std::ostream &operator<<(std::ostream &os, const term &term) {
@@ -85,24 +135,27 @@ TODO: // implement correct formating
 class term_iterator {
 public:
     term_iterator(const std::string &polynomial) :
-        _polynomial(polynomial)
-    {}
+        _polynomial(polynomial), _pos(polynomial.begin()) {
+    }
 
     bool next() {
-        if (_pos == std::string::npos) return false;
+        if (_pos == _polynomial.end()) return false;
 
-        std::list<std::string> signs = {"+", "-"};
-        for (auto sign : signs) {
-            size_t pos = _polynomial.find(sign, _pos+1);
-            if (pos == std::string::npos) { 
-                pos = _polynomial.size();
-            }
+        auto pos = _pos + 1;
 
-            if (pos - _pos > 0) {
-                _term = term::parse(_polynomial.substr(_pos, pos - _pos));
+        while (pos < _polynomial.end()) {
+            if (*pos == '+' || *pos == '-') {
+                _term = term::parse(std::string(_pos, pos));
                 _pos = pos;
                 return true;
             }
+            pos++;
+        }
+
+        if (pos != _pos) {
+            _term = term::parse(std::string(_pos, pos));
+            _pos = pos;
+            return true;
         }
 
         return false;
@@ -112,11 +165,10 @@ public:
         return _term;
     }
 
-
 private: 
     const std::string &_polynomial;
+    std::string::const_iterator _pos;
     term _term;
-    size_t _pos = 0;
 };
 
 class polynomial : public std::set<term, std::greater<term>> {
@@ -134,11 +186,22 @@ public:
     }
 
     operator std::string() const {
+
+        // create output
+
         std::stringstream stream;
         for (auto term : *this) {
-            stream << term << " ";
+            stream << term;
         }
-        return stream.str();
+        auto string = stream.str();
+
+        // remove first char if it is sign
+
+        bool signIsFirst = string.size() && 
+            (string[0] == '+');
+        if (signIsFirst) string.erase(0, 1);
+
+        return string;
     }
 
     friend std::ostream &operator<<(std::ostream &os, const polynomial &polynomial) {
@@ -162,19 +225,45 @@ term derivative(const term &term) {
     return newTerm;
 }
 
+polynomial normalize(const polynomial &poly) {
+    polynomial newPoly;
+    if (poly.empty()) return poly;
+
+    auto term = poly.begin();
+    auto newTerm = *term;
+    term++;
+   
+    while (term != poly.end()) {
+        auto sumTerm = newTerm + *term;    
+
+        if (sumTerm.isValid()) {
+            newTerm = sumTerm;
+
+        } else if (newTerm.isValid()) {
+            newPoly.insert(newTerm); 
+            newTerm = *term;
+        }
+        
+        term++;
+    }
+
+    if (newTerm.isValid()) {
+        newPoly.insert(newTerm); 
+    }
+    
+    return newPoly;
+}
+
 polynomial derivative(const polynomial &poly) {
     polynomial newPoly;
     for (auto term : poly) {
         newPoly.insert(derivative(term));
     }
-
-TODO: // implement correct constants handling
-
-    return newPoly;
+    return normalize(newPoly);
 }
 
-std::string derivative(std::string polynomial) {
-    return derivative(io2357911::polynomial::parse(polynomial));
+std::string derivative(std::string poly) {
+    return derivative(polynomial::parse(poly));
 }
 
 } // namespace io2357911

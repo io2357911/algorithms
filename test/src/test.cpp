@@ -69,19 +69,28 @@ void Test::polynomial_deriative() {
     };
 
     std::vector<test> tests = {
+        {"x^2-x^2+x", "1"},
         {"x^2+x", "2*x+1"},
         {"2*x^100+100*x^2", "200*x^99+200*x"},
         {"x^10000+x+1", "10000*x^9999+1"},
+        {"-x^2-x^3", "-3*x^2-2*x"},
+        {"x+x+x+x+x+x+x+x+x+x", "10"},
     };
 
     for (auto test : tests) {
-        //CPPUNIT_ASSERT_EQUAL(test.derivative, derivative(test.polynomial));
+        CPPUNIT_ASSERT_EQUAL(test.derivative, derivative(test.polynomial));
     }
 
-    std::string poly = "2*x^100+100*x^2+1+x^123";
+    std::string poly = "2*x^100-100*x^2+1+x^123";
 
     polynomial p = polynomial::parse(poly);
-    std::cout << p << std::endl;
-    std::cout << derivative(p) << std::endl;
+    //std::cout << p << std::endl;
+    //std::cout << derivative(p) << std::endl;
 
+    //std::cout << "p:" << poly << std::endl;
+
+    term_iterator term(poly);
+    while (term.next()) {
+     //   std::cout << "t:" << *term << std::endl;
+    }
 }
