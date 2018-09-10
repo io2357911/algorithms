@@ -12,3 +12,6 @@ sort:
 
 search:
 - in matrix sorted by rows and columns
+
+misc:
+- polynomial derivative in string representation
