@@ -80,3 +80,26 @@ void Test::polynomial_deriative() {
         CPPUNIT_ASSERT_EQUAL(test.derivative, derivative(test.polynomial));
     }
 }
+
+void Test::graph_search() {
+    vertex v1, v2;
+    edge e12;
+
+    graph<int, int, list_adjacency> lg;
+    v1 = lg.add_vertex(1);
+    v2 = lg.add_vertex(2);
+    e12 = lg.add_edge(v1, v2, 42);
+
+    std::cout << "v1:" << lg(v1) << ", v2:" << lg(v2) << ", e12:" << lg(e12) << std::endl;
+
+    auto vi = lg.vertex_iterator();
+    while (vi.next()) {
+        std::cout << "vid:" << (*vi).id << ", v:" << lg(*vi) << std::endl; 
+    }
+
+
+    graph<int, int, matrix_adjacency> mg;
+    v1 = mg.add_vertex(1);
+    v2 = mg.add_vertex(2);
+    mg.add_edge(v1, v2, 42);
+}

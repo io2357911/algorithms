@@ -10,12 +10,14 @@ class Test : public CppUnit::TestFixture {
    CPPUNIT_TEST(sort);
    CPPUNIT_TEST(find);
    CPPUNIT_TEST(polynomial_deriative);
+   CPPUNIT_TEST(graph_search);
    CPPUNIT_TEST_SUITE_END();
 
 public:
    void sort(); 
    void find(); 
    void polynomial_deriative(); 
+   void graph_search(); 
 };
 
 #endif // TEST_H
