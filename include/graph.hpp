@@ -199,7 +199,6 @@ public:
 
     private:
        list_graph *_graph; 
-       vertex _vertex;
        vertex_iterator_t _vi;
        vertex_edge_iterator_t _vei;
     };
