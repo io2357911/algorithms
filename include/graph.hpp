@@ -111,19 +111,17 @@ public:
        {} 
 
        bool next() {
-           _vid++; 
-           return isInRange(_vid, _graph->_vertices);
+           _vertex.id++; 
+           return isInRange(_vertex.id, _graph->_vertices);
        }
        
        vertex operator*(){
-           vertex v;
-           v.id = _vid;
-           return v;
+           return _vertex;
        }
 
     private:
        list_graph *_graph;
-       vertex_id _vid = NULL_ID;
+       vertex _vertex;
     };
     friend class vertex_iterator_t;
 

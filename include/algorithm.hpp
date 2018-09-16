@@ -4,6 +4,6 @@
 #include "sort.hpp"
 #include "find.hpp"
 #include "derivative.hpp"
-#include "graph.hpp"
+#include "search.hpp"
 
 #endif // ALGORITHM_H

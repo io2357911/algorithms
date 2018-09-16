@@ -134,6 +134,37 @@ void Test::graph_search() {
         std::cout << std::endl;
     }
 
+    {
+        using graph_t = graph<int, int, list_adjacency>;
+
+        struct visitor_t {
+            bool is_visited(graph_t *graph, const vertex &vert) {
+                return false;
+            }
+            void set_visited(graph_t *graph, const vertex &vert, bool visited) {
+                (*graph)(vert) = visited;
+            }
+            bool match(graph_t *graph, const vertex &vert, const int &value) {
+                return false;
+            }
+        } visitor;
+
+        bool found = bfs_search<graph_t, visitor_t, int>(&g, visitor, 5);
+        std::cout << "found:" << found << std::endl;
+        std::cout << std::endl;
+
+        using bfs_iterator_t = bfs_iterator<graph_t, visitor_t>;
+
+        bfs_iterator_t vi(&g, visitor);
+        while (vi.next()) {
+            std::cout << 
+                "vid:" << (*vi).id << "," << 
+                "v:" << g(*vi) << std::endl; 
+        }
+        std::cout << std::endl;
+    }
+    //class mybfs : public bfs_iterator<>
+
     //graph<int, int, matrix_adjacency> mg;
     //v1 = mg.add_vertex(1);
     //v2 = mg.add_vertex(2);
