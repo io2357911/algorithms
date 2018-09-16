@@ -85,31 +85,57 @@ void Test::graph_search() {
     vertex v1, v2;
     edge e12;
 
-    graph<int, int, list_adjacency> lg;
-    v1 = lg.add_vertex(1);
-    v2 = lg.add_vertex(2);
-    e12 = lg.add_edge(v1, v2, 42);
-    lg.add_edge(v2, v1, 1);
-    lg.add_edge(v2, v1, 2);
-    lg.add_edge(v2, v1, 3);
+    graph<int, int, list_adjacency> g;
+    v1 = g.add_vertex(1);
+    v2 = g.add_vertex(2);
+    e12 = g.add_edge(v1, v2, 42);
+    e12 = g.add_edge(v1, v2, 43);
+    g.add_edge(v2, v1, 1);
+    g.add_edge(v2, v1, 2);
+    g.add_edge(v2, v1, 3);
 
-    std::cout << "v1:" << lg(v1) << ", v2:" << lg(v2) << ", e12:" << lg(e12) << std::endl;
-
-    auto vi = lg.vertex_iterator();
-    while (vi.next()) {
-        std::cout << "vid:" << (*vi).id << ", v:" << lg(*vi) << std::endl; 
+    std::cout << 
+        "v1:" << g(v1) << ", " 
+        "v2:" << g(v2) << ", " 
+        "e12:" << g(e12) << std::endl;
+    std::cout << std::endl;
+    
+    {
+        auto vi = g.vertex_iterator();
+        while (vi.next()) {
+            std::cout << 
+                "vid:" << (*vi).id << "," << 
+                "v:" << g(*vi) << std::endl; 
+        }
+        std::cout << std::endl;
+    }
+    
+    if (1) {
+        auto ei = g.edge_iterator(v1);
+        while (ei.next()) {
+            std::cout << 
+                "eid:" << (*ei).id << ", " 
+                "v1:" << (*ei).src.id << ", " 
+                "v2:" << (*ei).dest.id << ", "  
+                "e:" << g(*ei) << std::endl; 
+        }
+        std::cout << std::endl;
     }
 
-    auto ei = lg.edge_iterator();
-    while (ei.next()) {
-        std::cout << "eid:" << (*ei).id << ", " 
-            "v1:" << (*ei).src.id << ", " 
-            "v2:" << (*ei).dest.id << ", "  
-            "e:" << lg(*ei) << std::endl; 
+    if (1) {
+        auto ei = g.edge_iterator();
+        while (ei.next()) {
+            std::cout << 
+                "eid:" << (*ei).id << ", " 
+                "v1:" << (*ei).src.id << ", " 
+                "v2:" << (*ei).dest.id << ", "  
+                "e:" << g(*ei) << std::endl; 
+        }
+        std::cout << std::endl;
     }
 
-    graph<int, int, matrix_adjacency> mg;
-    v1 = mg.add_vertex(1);
-    v2 = mg.add_vertex(2);
-    mg.add_edge(v1, v2, 42);
+    //graph<int, int, matrix_adjacency> mg;
+    //v1 = mg.add_vertex(1);
+    //v2 = mg.add_vertex(2);
+    //mg.add_edge(v1, v2, 42);
 }

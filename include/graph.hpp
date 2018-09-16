@@ -88,10 +88,11 @@ class graph : public base_graph<V, E, A> {
 template <class V, class E>
 class graph<V, E, list_adjacency> : public base_graph<V, E, list_adjacency> {
 public: 
+    using base_list_graph = base_graph<V, E, list_adjacency>; 
     using list_graph = graph<V, E, list_adjacency>; 
 
     edge add_edge(vertex first, vertex second, const E &ed) {
-        edge e = base_graph<V,E,list_adjacency>::add_edge(first, second, ed); 
+        edge e = base_list_graph::add_edge(first, second, ed); 
 
         edge_node en;
         en.eid = e.id;
@@ -105,13 +106,13 @@ public:
 
     class vertex_iterator_t {
     public:
-       vertex_iterator_t(const list_graph &graph) :
+       vertex_iterator_t(list_graph *graph) :
            _graph(graph)
        {} 
 
        bool next() {
            _vid++; 
-           return isInRange(_vid, _graph._vertices);
+           return isInRange(_vid, _graph->_vertices);
        }
        
        vertex operator*(){
@@ -121,13 +122,56 @@ public:
        }
 
     private:
-       const list_graph &_graph; 
+       list_graph *_graph;
        vertex_id _vid = NULL_ID;
     };
     friend class vertex_iterator_t;
 
     vertex_iterator_t vertex_iterator() const {
-        vertex_iterator_t it(*this);
+        vertex_iterator_t it(const_cast<list_graph*>(this));
+        return it;
+    }
+
+    // vertex_edge_iterator
+
+    class vertex_edge_iterator_t {
+    public:
+       vertex_edge_iterator_t(list_graph *graph,  const vertex &vertex) :
+           _graph(graph), _vertex(vertex) {
+       } 
+
+       bool next() {
+           if (!_init) {
+               auto &list = _graph->_adjacency[_vertex.id];
+               _iter = list.begin();
+               _iter_end = list.end();
+               _init = true;
+           } else {
+               _iter++;
+           }
+
+           return _iter != _iter_end;
+       }
+       
+       edge operator*(){
+           edge e;
+           e.id = (*_iter).eid;
+           e.src.id = _vertex.id;
+           e.dest.id = (*_iter).vid;
+           return e;
+       }
+
+    private:
+       list_graph *_graph; 
+       vertex _vertex;
+       bool _init = false;
+       edge_list::iterator _iter;
+       edge_list::iterator _iter_end;
+    };
+    friend class edge_iterator_t;
+
+    vertex_edge_iterator_t edge_iterator(const vertex &v) const {
+        vertex_edge_iterator_t it(const_cast<list_graph*>(this), v);
         return it;
     }
 
@@ -135,46 +179,34 @@ public:
 
     class edge_iterator_t {
     public:
-       edge_iterator_t(list_graph &graph) :
-           _graph(graph)
+       edge_iterator_t(list_graph *graph) :
+           _graph(graph), _vi(graph), _vei(graph, vertex())
        {} 
 
        bool next() {
-           while (_iter == _iter_end) {
-               _vid++; 
-               if (!isInRange(_vid, _graph._vertices)) {
+           while (!_vei.next()) {
+               if (!_vi.next()) {
                    return false;
                }
-
-               auto &list = _graph._adjacency[_vid];
-               _iter = list.begin();
-               _iter_end = list.end();
-               if (_iter != _iter_end) {
-                   return true;
-               }
+               _vei = _graph->edge_iterator(*_vi);
            }
-           _iter++;
-           return _iter != _iter_end ? true : next();
+           return true;
        }
        
        edge operator*(){
-           edge e;
-           e.id = (*_iter).eid;
-           e.src.id = _vid;
-           e.dest.id = (*_iter).vid;
-           return e;
+           return *_vei;
        }
 
     private:
-       list_graph &_graph; 
-       vertex_id _vid = NULL_ID;
-       edge_list::iterator _iter;
-       edge_list::iterator _iter_end;
+       list_graph *_graph; 
+       vertex _vertex;
+       vertex_iterator_t _vi;
+       vertex_edge_iterator_t _vei;
     };
     friend class edge_iterator_t;
 
     edge_iterator_t edge_iterator() const {
-        edge_iterator_t it(const_cast<list_graph&>(*this));
+        edge_iterator_t it(const_cast<list_graph*>(this));
         return it;
     }
 };
@@ -183,21 +215,7 @@ public:
 template <class V, class E>
 class graph<V, E, matrix_adjacency> : public base_graph<V, E, matrix_adjacency> {
 public: 
-    //edge add_edge(vertex first, vertex second, const E &e) {
-        //std::cout << "matrix add edge" << std::endl;
-        //return edge();
-    //}
 };
-
-//template <class id>
-//void add_edge(Graph g, edge e);
-//vertex nextVertex(Graph g); 
-//edge next_edge(Graph g); 
-//vertex nextVertex(Graph g, vertex v); 
-//
-//class Graph::EdgeIterator;
-//class Edge::EdgeIterator;
-//class Graph::VertexIterator;
 
 } // namespace io2357911
 
