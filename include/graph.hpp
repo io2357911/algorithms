@@ -101,6 +101,8 @@ public:
         return e;
     }
     
+    // vertex_iterator
+
     class vertex_iterator_t {
     public:
        vertex_iterator_t(const list_graph &graph) :
@@ -126,6 +128,53 @@ public:
 
     vertex_iterator_t vertex_iterator() const {
         vertex_iterator_t it(*this);
+        return it;
+    }
+
+    // edge_iterator
+
+    class edge_iterator_t {
+    public:
+       edge_iterator_t(list_graph &graph) :
+           _graph(graph)
+       {} 
+
+       bool next() {
+           while (_iter == _iter_end) {
+               _vid++; 
+               if (!isInRange(_vid, _graph._vertices)) {
+                   return false;
+               }
+
+               auto &list = _graph._adjacency[_vid];
+               _iter = list.begin();
+               _iter_end = list.end();
+               if (_iter != _iter_end) {
+                   return true;
+               }
+           }
+           _iter++;
+           return _iter != _iter_end ? true : next();
+       }
+       
+       edge operator*(){
+           edge e;
+           e.id = (*_iter).eid;
+           e.src.id = _vid;
+           e.dest.id = (*_iter).vid;
+           return e;
+       }
+
+    private:
+       list_graph &_graph; 
+       vertex_id _vid = NULL_ID;
+       edge_list::iterator _iter;
+       edge_list::iterator _iter_end;
+    };
+    friend class edge_iterator_t;
+
+    edge_iterator_t edge_iterator() const {
+        edge_iterator_t it(const_cast<list_graph&>(*this));
         return it;
     }
 };
