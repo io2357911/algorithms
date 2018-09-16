@@ -153,17 +153,16 @@ void Test::graph_search() {
         std::cout << "found:" << found << std::endl;
         std::cout << std::endl;
 
-        using bfs_iterator_t = bfs_iterator<graph_t, visitor_t>;
+        //using bfs_iterator_t = bfs_iterator<graph_t, visitor_t>;
 
-        bfs_iterator_t vi(&g, visitor);
-        while (vi.next()) {
-            std::cout << 
-                "vid:" << (*vi).id << "," << 
-                "v:" << g(*vi) << std::endl; 
-        }
-        std::cout << std::endl;
+        //bfs_iterator_t vi(&g, visitor);
+        //while (vi.next()) {
+            //std::cout << 
+                //"vid:" << (*vi).id << "," << 
+                //"v:" << g(*vi) << std::endl; 
+        //}
+        //std::cout << std::endl;
     }
-    //class mybfs : public bfs_iterator<>
 
     //graph<int, int, matrix_adjacency> mg;
     //v1 = mg.add_vertex(1);
