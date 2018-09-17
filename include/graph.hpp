@@ -190,6 +190,10 @@ public:
 
            return _iter != _iter_end;
        }
+
+       operator bool() const {
+           return _iter != _iter_end;
+       }
        
        edge operator*(){
            edge e;

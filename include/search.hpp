@@ -3,6 +3,7 @@
 
 #include <map>
 #include <queue>
+#include <stack>
 #include "graph.hpp"
 
 namespace io2357911 {
@@ -16,7 +17,7 @@ using visit_map = std::map<vertex, bool>;
  * @return true - if visitor returned true
  */
 template <class G, class V>
-bool dfs(G &graph, V visitor) {
+bool dfs(G &graph, V visitor, bool recursive = false) {
 
     // mark all vertices as not visited
 
@@ -30,9 +31,15 @@ bool dfs(G &graph, V visitor) {
 
     vi = graph.vertex_iterator();
     while (vi.next()) {
-       if (dfs(graph, visitor, *vi, visited)) {
-           return true;
-       } 
+        if (recursive) {
+            if (dfs(graph, visitor, *vi, visited)) {
+                return true;
+            } 
+        } else {
+            if (dfs_not_recursive(graph, visitor, *vi, visited)) {
+                return true;
+            } 
+        }
     }
     return false;
 }
@@ -44,7 +51,6 @@ bool dfs(G &graph, V visitor, const vertex &v, visit_map &visited) {
         // visit vertex
 
         visited[v] = true;
-
         if (visitor(graph, v)) {
             return true;
         }
@@ -54,13 +60,45 @@ bool dfs(G &graph, V visitor, const vertex &v, visit_map &visited) {
         auto ei = graph.edge_iterator(v);
         while (ei.next()) {
             if (dfs(graph, visitor, (*ei).dest, visited)) {
-                return true;;
+                return true;
             } 
         }
     }
     return false;
 }
 
+template <class G, class V>
+bool dfs_not_recursive(G &graph, V visitor, const vertex &v, visit_map &visited) {
+    if (visited[v]) return false;
+
+    std::stack<typename G::vertex_edge_iterator_t> stack;
+
+    auto visit = [&] (const vertex& v) -> bool {
+        visited[v] = true;
+        stack.push(graph.edge_iterator(v));
+        return visitor(graph, v);
+    };
+    
+    if (visit(v)) return true;
+
+    while (stack.size()) {
+
+        // find first not visited neighbour
+
+        auto &ei = stack.top();
+        while (ei.next() && visited[(*ei).dest]) {}
+
+        if (ei) {
+            // going deeper
+            if (visit((*ei).dest)) return true;
+        
+        } else {
+            // return back
+            stack.pop();
+        }
+    }
+    return false;
+}
 /**
  * @brief bfs breadth first graph search
  * @param graph to search in

@@ -159,8 +159,11 @@ void Test::graph_search() {
             return false;
         };
 
+        std::cout << "dfs (recursive):" << std::endl;
+        dfs<graph_t>(g, visitor, true);
+
         std::cout << "dfs:" << std::endl;
-        dfs<graph_t>(g, visitor);
+        dfs<graph_t>(g, visitor, false);
 
         std::cout << "bfs:" << std::endl;
         bfs<graph_t>(g, visitor);
