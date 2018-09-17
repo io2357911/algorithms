@@ -170,5 +170,25 @@ void Test::graph_search() {
 
         std::cout << std::endl;
     }
+}
 
+void Test::binary_search() {
+    array<array<int>> arrays = {
+        {0},
+        {1,9},
+        {1,1,3,6,20},
+        {-15,0,3,155},
+    };
+
+    for (auto array : arrays) {
+        for (auto value : array) {
+            CPPUNIT_ASSERT_EQUAL(true, ::binary_search(array, value));
+        }
+    }
+
+    array<int> array = {4, 8, 15, 18, 23, 42};
+    for (auto value : array) {
+        CPPUNIT_ASSERT_EQUAL(false, ::binary_search(array, value - 1));
+        CPPUNIT_ASSERT_EQUAL(false, ::binary_search(array, value + 1));
+    }
 }

@@ -156,7 +156,34 @@ bool bfs(G &graph, V visitor, const vertex &v, visit_map &visited) {
     }
     return false;
 }    
-    
+
+/**
+ * @brief binary_search searches value in sorted array
+ * @param array to search in
+ * @param value to search
+ * @return true - if array contains value, else - otherwise
+ */
+template <typename T>
+bool binary_search(const array<T> &array, const T &value) {
+    size_t l = 0;
+    size_t h = array.size();
+
+    while (h - l > 0) {
+        size_t m = (h + l) / 2;
+
+        if (value == array[m]) {
+            return true;
+
+        } else if (value > array[m]) {
+            l = m + 1;
+        
+        } else {
+            h = m;
+        }
+    }
+    return false;
+}
+
 } // namespace io2357911
 
 #endif // SEARCH_H

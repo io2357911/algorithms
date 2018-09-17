@@ -11,6 +11,7 @@ class Test : public CppUnit::TestFixture {
    CPPUNIT_TEST(find);
    CPPUNIT_TEST(polynomial_deriative);
    CPPUNIT_TEST(graph_search);
+   CPPUNIT_TEST(binary_search);
    CPPUNIT_TEST_SUITE_END();
 
 public:
@@ -18,6 +19,7 @@ public:
    void find(); 
    void polynomial_deriative(); 
    void graph_search(); 
+   void binary_search(); 
 };
 
 #endif // TEST_H
