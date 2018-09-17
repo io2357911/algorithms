@@ -1,57 +1,124 @@
 #ifndef SEARCH_H
 #define SEARCH_H
 
-#include <functional>
+#include <map>
+#include <queue>
 #include "graph.hpp"
 
 namespace io2357911 {
 
-template <class G, class V, class T>
-bool bfs_search(G *graph, V &visitor, const T &value) {
-    auto vi = graph->vertex_iterator();
+using visit_map = std::map<vertex, bool>;
+
+/**
+ * @brief dfs deep first graph search
+ * @param graph to search in
+ * @param visitor is a function to call on visited vertex (return true to stop search)
+ * @return true - if visitor returned true
+ */
+template <class G, class V>
+bool dfs(G &graph, V visitor) {
+
+    // mark all vertices as not visited
+
+    visit_map visited;
+    auto vi = graph.vertex_iterator();
     while (vi.next()) {
-        visitor.set_visited(graph, *vi, false);
+        visited[*vi] = false;
     }
+    
+    // search across all vertices if graph is not coupled
 
-    vi = graph->vertex_iterator();
+    vi = graph.vertex_iterator();
     while (vi.next()) {
-        if (!visitor.is_visited(graph, *vi)) {
-            visitor.set_visited(graph, *vi, true);
-        }
-
-        if (visitor.match(graph, *vi, value)) {
-            return true;
-        }
+       if (dfs(graph, visitor, *vi, visited)) {
+           return true;
+       } 
     }
-
     return false;
 }
 
 template <class G, class V>
-class bfs_iterator {
-public:
-    bfs_iterator(G *graph, V visitor) :
-        _graph(graph), _vi(graph->vertex_iterator())
-    {} 
+bool dfs(G &graph, V visitor, const vertex &v, visit_map &visited) {
+    if (!visited[v]) {
 
-    bool next() {
-        return _vi.next(); 
-    }
+        // visit vertex
 
-    vertex operator*(){
-        if (!_visitor.is_visited(_graph, *_vi)) {
-            _visitor.set_visited(_graph, *_vi, true);
+        visited[v] = true;
+
+        if (visitor(graph, v)) {
+            return true;
         }
-        return *_vi;
+
+        // continue with neighbours
+
+        auto ei = graph.edge_iterator(v);
+        while (ei.next()) {
+            if (dfs(graph, visitor, (*ei).dest, visited)) {
+                return true;;
+            } 
+        }
     }
+    return false;
+}
 
-protected:
-    G *_graph;
-    typename G::vertex_iterator_t _vi;
-    V _visitor;
-};
+/**
+ * @brief bfs breadth first graph search
+ * @param graph to search in
+ * @param visitor is a function to call on visited vertex (return true to stop search)
+ * @return true - if visitor returned true
+ */
+template <class G, class V>
+bool bfs(G &graph, V visitor) {
 
+    // mark all vertices as not visited
+
+    visit_map visited;
+    auto vi = graph.vertex_iterator();
+    while (vi.next()) {
+        visited[*vi] = false;
+    }
+    
+    // search across all vertices if graph is not coupled
+
+    vi = graph.vertex_iterator();
+    while (vi.next()) {
+       if (bfs(graph, visitor, *vi, visited)) {
+           return true;
+       } 
+    }
+    return false;
+}
+
+template <class G, class V>
+bool bfs(G &graph, V visitor, const vertex &v, visit_map &visited) {
+
+    // push vertex to queue
+
+    std::queue<vertex> vertices;
+    vertices.push(v); 
+
+    while (vertices.size()) {
+        auto v = vertices.front();
+        vertices.pop();
+        if (visited[v]) continue;
+
+        // visit vertex
+
+        visited[v] = true;
+        if (visitor(graph, v)) {
+            return true;
+        }
+
+        // push neighbours to queue
+
+        auto ei = graph.edge_iterator(v);
+        while (ei.next()) {
+            vertices.push((*ei).dest);
+        }
+    }
+    return false;
+}    
+    
 } // namespace io2357911
 
 #endif // SEARCH_H
-

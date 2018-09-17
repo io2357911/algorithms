@@ -82,25 +82,37 @@ void Test::polynomial_deriative() {
 }
 
 void Test::graph_search() {
-    vertex v1, v2;
-    edge e12;
 
-    graph<int, int, list_adjacency> g;
-    v1 = g.add_vertex(1);
-    v2 = g.add_vertex(2);
-    e12 = g.add_edge(v1, v2, 42);
-    e12 = g.add_edge(v1, v2, 43);
-    g.add_edge(v2, v1, 1);
-    g.add_edge(v2, v1, 2);
-    g.add_edge(v2, v1, 3);
+    /*
+     * 1-2-3  7
+     * | | |  |
+     * 4-5-6  8
+     */
 
-    std::cout << 
-        "v1:" << g(v1) << ", " 
-        "v2:" << g(v2) << ", " 
-        "e12:" << g(e12) << std::endl;
-    std::cout << std::endl;
+    using graph_t = graph<int, int, list_adjacency>;
+    //using graph_t = graph<int, int, matrix_adjacency>;
+
+    graph_t g;
+    vertex v1 = g.add_vertex(1);
+    vertex v2 = g.add_vertex(2);
+    vertex v3 = g.add_vertex(3);
+    vertex v4 = g.add_vertex(4);
+    vertex v5 = g.add_vertex(5);
+    vertex v6 = g.add_vertex(6);
+    vertex v7 = g.add_vertex(7);
+    vertex v8 = g.add_vertex(8);
+    g.add_edge(v1, v2, 12);
+    g.add_edge(v1, v4, 14);
+    g.add_edge(v2, v3, 23);
+    g.add_edge(v2, v5, 25);
+    g.add_edge(v3, v6, 36);
+    g.add_edge(v4, v5, 45);
+    g.add_edge(v5, v6, 56);
+    g.add_edge(v7, v8, 78);
     
-    {
+    if (1) {
+        std::cout << "vertex iterator:" << std::endl;
+
         auto vi = g.vertex_iterator();
         while (vi.next()) {
             std::cout << 
@@ -111,6 +123,8 @@ void Test::graph_search() {
     }
     
     if (1) {
+        std::cout << "vertex edge iterator:" << std::endl;
+
         auto ei = g.edge_iterator(v1);
         while (ei.next()) {
             std::cout << 
@@ -123,6 +137,8 @@ void Test::graph_search() {
     }
 
     if (1) {
+        std::cout << "edge iterator:" << std::endl;
+
         auto ei = g.edge_iterator();
         while (ei.next()) {
             std::cout << 
@@ -134,38 +150,22 @@ void Test::graph_search() {
         std::cout << std::endl;
     }
 
-    {
-        using graph_t = graph<int, int, list_adjacency>;
+    if (1) {
+        auto visitor = [] (graph_t &graph, const vertex &v) -> bool {
+            std::cout << 
+                "vid:" << v.id << "," << 
+                "v:" << graph(v) << std::endl; 
+            //return graph(v) == 3; 
+            return false;
+        };
 
-        struct visitor_t {
-            bool is_visited(graph_t *graph, const vertex &vert) {
-                return false;
-            }
-            void set_visited(graph_t *graph, const vertex &vert, bool visited) {
-                (*graph)(vert) = visited;
-            }
-            bool match(graph_t *graph, const vertex &vert, const int &value) {
-                return false;
-            }
-        } visitor;
+        std::cout << "dfs:" << std::endl;
+        dfs<graph_t>(g, visitor);
 
-        bool found = bfs_search<graph_t, visitor_t, int>(&g, visitor, 5);
-        std::cout << "found:" << found << std::endl;
+        std::cout << "bfs:" << std::endl;
+        bfs<graph_t>(g, visitor);
+
         std::cout << std::endl;
-
-        //using bfs_iterator_t = bfs_iterator<graph_t, visitor_t>;
-
-        //bfs_iterator_t vi(&g, visitor);
-        //while (vi.next()) {
-            //std::cout << 
-                //"vid:" << (*vi).id << "," << 
-                //"v:" << g(*vi) << std::endl; 
-        //}
-        //std::cout << std::endl;
     }
 
-    //graph<int, int, matrix_adjacency> mg;
-    //v1 = mg.add_vertex(1);
-    //v2 = mg.add_vertex(2);
-    //mg.add_edge(v1, v2, 42);
 }

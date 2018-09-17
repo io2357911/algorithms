@@ -10,36 +10,70 @@
 
 namespace io2357911 {
 
-
+/**
+ * @brief invalid_vertex_exception class exception
+ */
 class invalid_vertex_exception : public std::exception {};
+/**
+ * @brief invalid_edge_exception class exception
+ */
 class invalid_edge_exception : public std::exception {};
 
+/**
+ * @brief vertex_id is a graph vertex id
+ */
 using vertex_id = int;
 
+/**
+ * @brief vertex struct is a graph vertex
+ */
 struct vertex {
     vertex_id id = NULL_ID; 
+
+    bool operator<(const vertex &other) const {
+        return id < other.id;
+    }
 };
 
+/**
+ * @brief edge_id is a graph edge id
+ */
 using edge_id = int;
 
+/**
+ * @brief edge struct is a graph edge
+ */
 struct edge {
     edge_id id = NULL_ID;
     vertex src;
     vertex dest;
 };
 
-
+/**
+ * @brief matrix_adjacency is adjacency matrix graph representation
+ */
 using matrix_adjacency = matrix<edge_id>;
 
 
+/**
+ * @brief edge_node struct is a graph edge list node 
+ */
 struct edge_node {
     edge_id eid;
     vertex_id vid;
 };
+/**
+ * @brief edge_list class is a graph edge list
+ */
 using edge_list = std::list<edge_node>;
+/**
+ * @brief list_adjacency class is adjacency list graph representation
+ */
 using list_adjacency = std::map<vertex_id, edge_list>;
 
-
+/**
+ * @brief base_graph class is base graph class
+ */
 template <class V, class E, class A>
 class base_graph {
 public:
@@ -81,10 +115,16 @@ protected:
     A _adjacency;
 };
 
+/**
+ * @brief graph class
+ */
 template <class V, class E, class A>
 class graph : public base_graph<V, E, A> {
 };
 
+/**
+ * @brief graph class list_adjacency specialization
+ */
 template <class V, class E>
 class graph<V, E, list_adjacency> : public base_graph<V, E, list_adjacency> {
 public: 
@@ -208,7 +248,9 @@ public:
     }
 };
 
-
+/**
+ * @brief graph class matrix_adjacency specialization
+ */
 template <class V, class E>
 class graph<V, E, matrix_adjacency> : public base_graph<V, E, matrix_adjacency> {
 public: 
