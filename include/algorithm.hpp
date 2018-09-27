@@ -5,5 +5,6 @@
 #include "find.hpp"
 #include "derivative.hpp"
 #include "search.hpp"
+#include "bigint.hpp"
 
 #endif // ALGORITHM_H

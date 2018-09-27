@@ -192,3 +192,22 @@ void Test::binary_search() {
         CPPUNIT_ASSERT_EQUAL(false, ::binary_search(array, value + 1));
     }
 }
+
+void Test::bigint() {
+    for (int value = 0; value < 512; value++) {
+        BigInt bi = value;
+        CPPUNIT_ASSERT(bi == value);
+    }
+
+    for (int first = 0; first < 16; first++) {
+        for (int second = 0; second < 16; second++) {
+            int sum = first + second;
+            BigInt bsum = BigInt(first) + BigInt(second);
+            CPPUNIT_ASSERT(bsum == sum);
+
+            int prod = first * second;
+            BigInt bprod = BigInt(first) * BigInt(second);
+            CPPUNIT_ASSERT(bprod == prod);
+        }
+    }
+}
