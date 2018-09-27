@@ -18,3 +18,4 @@ search:
 
 misc:
 - polynomial derivative in string representation
+- simple big int arithmetics with "+" and "-" operations
